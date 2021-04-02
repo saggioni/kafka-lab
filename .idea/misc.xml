@@ -4,11 +4,11 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/kafka-lab-usecase/pom.xml" />
         <option value="$PROJECT_DIR$/kafka-lab-domain/pom.xml" />
         <option value="$PROJECT_DIR$/kafka-lab-springapplication/pom.xml" />
         <option value="$PROJECT_DIR$/kafka-lab-adapter/pom.xml" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
   </component>
