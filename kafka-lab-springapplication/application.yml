@@ -1,0 +1,17 @@
+server:
+  port: 8080
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      auto-offset-reset: earliest
+      group-id: request-reply-group
+kafka:
+  topic:
+    proposal:
+      request: topic1
+      reply: topic2
+  request-reply:
+    timeout-ms: 1000
