@@ -1,7 +1,8 @@
 package br.com.saggioni.lab.springapplication.controller;
 
 import br.com.saggioni.lab.domain.Proposal;
-import br.com.saggioni.lab.springapplication.util.CompletableFutureReplyingKafkaOperations;
+import br.com.saggioni.lab.springapplication.consumer.SimpleConsumer;
+import br.com.saggioni.lab.springapplication.util.CompletableReplyingKafkaOperations;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 @RestController
 public class RequestReplyProposalApiController {
     @Autowired
-    private CompletableFutureReplyingKafkaOperations<String, String, Proposal> requestReplyClient;
+    private CompletableReplyingKafkaOperations<String, String, Proposal> requestReplyClient;
 
     @Value("${kafka.topic.proposal.request}")
     private String requestTopic;
@@ -26,7 +27,7 @@ public class RequestReplyProposalApiController {
             stopWatch.start();
             Proposal proposal = getProposalAsync(proposalId).get();
             stopWatch.stop();
-            System.out.println("Sync to Async::Execution Time: " + stopWatch.toString());
+            System.out.printf("%s: %s - %s%n", RequestReplyProposalApiController.class.getName(), proposal.getId(), stopWatch.toString());
             return proposal;
         } catch (ExecutionException | InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -35,7 +36,11 @@ public class RequestReplyProposalApiController {
     }
 
     public CompletableFuture<Proposal> getProposalAsync(String proposalId) {
-        return requestReplyClient.requestReply(requestTopic, proposalId);
+        return requestReplyClient.requestReply(requestTopic, proposalId)
+                .exceptionally(ex -> {
+                    System.out.println("Request-Reply Exception: " + ex.getMessage());
+                    return null;
+                });
     }
 }
 

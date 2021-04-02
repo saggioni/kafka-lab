@@ -9,11 +9,11 @@ import org.springframework.kafka.requestreply.RequestReplyFuture;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
-public class CompletableFutureReplyingKafkaTemplate<K, V, R> extends PartitionAwareReplyingKafkaTemplate<K, V, R>
-    implements CompletableFutureReplyingKafkaOperations<K, V, R> {
+public class CompletableReplyingPartitionKafkaTemplate<K, V, R> extends ReplyingPartitionKafkaTemplate<K, V, R>
+    implements CompletableReplyingKafkaOperations<K, V, R> {
 
-  public CompletableFutureReplyingKafkaTemplate(ProducerFactory<K, V> producerFactory,
-      GenericMessageListenerContainer<K, R> replyContainer) {
+  public CompletableReplyingPartitionKafkaTemplate(ProducerFactory<K, V> producerFactory,
+                                                   GenericMessageListenerContainer<K, R> replyContainer) {
     super(producerFactory, replyContainer);
   }
 
@@ -58,7 +58,7 @@ public class CompletableFutureReplyingKafkaTemplate<K, V, R> extends PartitionAw
   }
 
   private CompletableFuture<R> adapt(RequestReplyFuture<K, V, R> requestReplyFuture) {
-    CompletableFuture<R> completableResult = new CompletableFuture<R>() {
+    CompletableFuture<R> completableResult = new CompletableFuture<>() {
       @Override
       public boolean cancel(boolean mayInterruptIfRunning) {
         boolean result = requestReplyFuture.cancel(mayInterruptIfRunning);
@@ -67,22 +67,24 @@ public class CompletableFutureReplyingKafkaTemplate<K, V, R> extends PartitionAw
       }
     };
     // request
-    requestReplyFuture.getSendFuture().addCallback(new ListenableFutureCallback<SendResult<K, V>>() {
+    requestReplyFuture.getSendFuture().addCallback(new ListenableFutureCallback<>() {
       @Override
       public void onSuccess(SendResult<K, V> sendResult) {
         // Do Nothing
       }
+
       @Override
       public void onFailure(Throwable t) {
         completableResult.completeExceptionally(t);
       }
     });
     // reply
-    requestReplyFuture.addCallback(new ListenableFutureCallback<ConsumerRecord<K, R>>() {
+    requestReplyFuture.addCallback(new ListenableFutureCallback<>() {
       @Override
       public void onSuccess(ConsumerRecord<K, R> result) {
         completableResult.complete(result.value());
       }
+
       @Override
       public void onFailure(Throwable t) {
         completableResult.completeExceptionally(t);

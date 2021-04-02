@@ -2,7 +2,7 @@ package br.com.saggioni.lab.springapplication.util;
 
 import java.util.concurrent.CompletableFuture;
 
-public interface CompletableFutureReplyingKafkaOperations<K, V, R> {
+public interface CompletableReplyingKafkaOperations<K, V, R> {
 
     CompletableFuture<R> requestReplyDefault(V value);
 

@@ -3,7 +3,7 @@ package br.com.saggioni.lab.springapplication.util;
 import org.springframework.kafka.requestreply.ReplyingKafkaOperations;
 import org.springframework.kafka.requestreply.RequestReplyFuture;
 
-public interface PartitionAwareReplyingKafkaOperations<K, V, R> extends ReplyingKafkaOperations<K, V, R> {
+public interface ReplyingPartitionKafkaOperations<K, V, R> extends ReplyingKafkaOperations<K, V, R> {
 
     RequestReplyFuture<K, V, R> sendAndReceiveDefault(V data);
 

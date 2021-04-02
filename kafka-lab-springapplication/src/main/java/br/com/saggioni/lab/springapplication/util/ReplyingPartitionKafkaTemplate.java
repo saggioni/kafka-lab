@@ -11,10 +11,10 @@ import org.springframework.kafka.requestreply.RequestReplyFuture;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.lang.Nullable;
 
-public class PartitionAwareReplyingKafkaTemplate<K, V, R> extends ReplyingKafkaTemplate<K, V, R> implements PartitionAwareReplyingKafkaOperations<K, V, R> {
+public class ReplyingPartitionKafkaTemplate<K, V, R> extends ReplyingKafkaTemplate<K, V, R> implements ReplyingPartitionKafkaOperations<K, V, R> {
 
-  public PartitionAwareReplyingKafkaTemplate(ProducerFactory<K, V> producerFactory,
-      GenericMessageListenerContainer<K, R> replyContainer) {
+  public ReplyingPartitionKafkaTemplate(ProducerFactory<K, V> producerFactory,
+                                        GenericMessageListenerContainer<K, R> replyContainer) {
     super(producerFactory, replyContainer);
   }
 
@@ -33,7 +33,7 @@ public class PartitionAwareReplyingKafkaTemplate<K, V, R> extends ReplyingKafkaT
 
   private static byte[] intToBytesBigEndian(final int data) {
     return new byte[] {(byte) ((data >> 24) & 0xff), (byte) ((data >> 16) & 0xff),
-        (byte) ((data >> 8) & 0xff), (byte) ((data >> 0) & 0xff),};
+        (byte) ((data >> 8) & 0xff), (byte) ((data) & 0xff),};
   }
 
   @Override

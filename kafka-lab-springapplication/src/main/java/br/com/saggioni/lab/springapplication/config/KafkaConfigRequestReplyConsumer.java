@@ -1,8 +1,8 @@
 package br.com.saggioni.lab.springapplication.config;
 
 import br.com.saggioni.lab.domain.Proposal;
-import br.com.saggioni.lab.springapplication.util.CompletableFutureReplyingKafkaOperations;
-import br.com.saggioni.lab.springapplication.util.CompletableFutureReplyingKafkaTemplate;
+import br.com.saggioni.lab.springapplication.util.CompletableReplyingKafkaOperations;
+import br.com.saggioni.lab.springapplication.util.CompletableReplyingPartitionKafkaTemplate;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -24,7 +24,7 @@ import java.util.Map;
 
 @Configuration
 @EnableKafka
-public class KafkaConfigRequestReply {
+public class KafkaConfigRequestReplyConsumer {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
@@ -65,8 +65,8 @@ public class KafkaConfigRequestReply {
     requestReplyClient.requestReply()
     ------------------------------------------- */
     @Bean //Request-Reply (Entrypoint Sync to Async)
-    public CompletableFutureReplyingKafkaOperations<String, String, Proposal> requestReplyClient() {
-        var requestReply = new CompletableFutureReplyingKafkaTemplate<>(requestProducerFactory(), replyListenerContainer());
+    public CompletableReplyingKafkaOperations<String, String, Proposal> requestReplyClient() {
+        var requestReply = new CompletableReplyingPartitionKafkaTemplate<>(requestProducerFactory(), replyListenerContainer());
         requestReply.setDefaultTopic(requestTopic);
         requestReply.setReplyTimeout(replyTimeout);
         return requestReply;
@@ -97,7 +97,7 @@ public class KafkaConfigRequestReply {
     ------------------------------------------- */
     @Bean //Request-Command Consumer - Async side (step 2)
     public ConsumerFactory<String, String> requestConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs(), new StringDeserializer(), new JsonDeserializer<String>());
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(), new StringDeserializer(), new JsonDeserializer<>());
     }
 
     @Bean //Reply Producer Async side (step 3)
