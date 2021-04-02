@@ -8,6 +8,8 @@ spring:
     consumer:
       auto-offset-reset: earliest
       group-id: kafka-lab-springapplication
+    simple-consumer:
+      group-id: kafka-lab-simple-consumer
 kafka:
   topic:
     proposal:

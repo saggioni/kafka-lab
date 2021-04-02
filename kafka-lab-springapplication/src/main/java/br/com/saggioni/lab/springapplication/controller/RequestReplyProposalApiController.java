@@ -26,7 +26,7 @@ public class RequestReplyProposalApiController {
             stopWatch.start();
             Proposal proposal = getProposalAsync(proposalId).get();
             stopWatch.stop();
-            System.out.println("Execution Time: " + stopWatch.toString());
+            System.out.println("Sync to Async::Execution Time: " + stopWatch.toString());
             return proposal;
         } catch (ExecutionException | InterruptedException e) {
             Thread.currentThread().interrupt();

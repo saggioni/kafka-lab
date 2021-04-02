@@ -15,9 +15,9 @@ public class RequestReplyConsumer {
     @KafkaListener(topics = "${kafka.topic.proposal.request}", containerFactory = "requestReplyListenerContainerFactory")
     @SendTo()
     public Proposal consume(String proposalId) {
-        System.out.println("Consuming Request/Command from Kafka Topic (step 2): " + proposalId);
-        Proposal proposal = proposalController.getProposal(proposalId);
-        System.out.println("Producing Reply/Response to Kafka Topic (step 3): " + proposalId);
-        return proposal;
+            //System.out.println("Consuming Request/Command from Kafka Topic (step 2): " + proposalId);
+            Proposal proposal = proposalController.getProposal(proposalId);
+            //System.out.println("Producing Reply/Response to Kafka Topic (step 3): " + proposalId);
+            return proposal;
     }
 }
